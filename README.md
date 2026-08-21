@@ -55,7 +55,7 @@ Note: If you are having troubles when you try `git push`, follow [these](https:/
 
 4. Once you have pushed your changes, [submit a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests):
 
-<img width="479" alt="fork_repository_example" src="https://docs.github.com/assets/cb-26570/images/help/pull_requests/pull-request-start-review-button.png">
+<img width="479" alt="pull-requests" src="https://docs.github.com/assets/cb-165497/mw-1440/images/help/pull_requests/merge-pull-request-options.webp">
 
 Your changes will be reviewed by the repository owner (kcrovetti1) and accepted or denied depending on the accuracy/usefulness of the proposed changes.
 
