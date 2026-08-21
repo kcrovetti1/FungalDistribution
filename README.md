@@ -38,7 +38,7 @@ In order to contribute, make changes, suggestions, or provide feedback to this r
 2. Then, clone this repository to your laptop/desktop computer.
 
 `
-git clone https://github.com/teddyaroca/X_necrophora_pop_gen.git
+git clone https://github.com/kcrovetti1/FungalDistribution.git
 `
 
 3. Make changes, add, or edit current files and commit those changes to your copy of this 
@@ -57,11 +57,12 @@ Note: If you are having troubles when you try `git push`, follow [these](https:/
 
 <img width="479" alt="fork_repository_example" src="https://docs.github.com/assets/cb-26570/images/help/pull_requests/pull-request-start-review-button.png">
 
-Your changes will be reviewed by the repository owner (teddyaroca) and accepted or denied depending on the accuracy/usefulness of the proposed changes.
+Your changes will be reviewed by the repository owner (kcrovetti1) and accepted or denied depending on the accuracy/usefulness of the proposed changes.
 
 # Data
-This folder contains the metadata and manually curated datasets from FungAMR[^1] and the newly created dataset by the [Fungal Ecology Lab members] (www.fungalecologylab.org): www.fungalecologylab.org.
+This folder contains the metadata and manually curated datasets from FungAMR[^1] and the newly created dataset by the [Fungal Ecology Lab members](www.fungalecologylab.org): www.fungalecologylab.org.
 
 
 
 [^1]:Bédard C, Pageau A, Fijarczyk A, Mendoza-Salido D, Alcañiz AJ, Després PC, Durand R, Plante S, Alexander EMM, Rouleau FD, Jordan DF, Jay A, Giguère M, Bernier M, Sharma J, Maroc L, Gervais NC, Menon ACT, Gagnon-Arsenault I, Bakker S, Rhodes J, Dufresne PJ, Bharat A, Sellam A, De Luca DG, Gerstein A, Shapiro RS, Quijada NM, Landry CR. FungAMR: a comprehensive database for investigating fungal mutations associated with antimicrobial resistance. Nat Microbiol. 2025 Sep;10(9):2338-2352. doi: 10.1038/s41564-025-02084-7. Epub 2025 Aug 11. PMID: 40790106.
+
