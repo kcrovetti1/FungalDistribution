@@ -25,6 +25,7 @@
 #install.packages("ggalluvial")
 #install.packages("readxl")
 #install.packages("viridis")
+#install.packages("tidyr")
 #-------------------------------------------------------------------------------
 #Load Dependencies (For Local Run)
 #-------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ library(DT)
 library(ggalluvial)
 library(readxl)
 library(viridis)
+library(tidyr)
 #-------------------------------------------------------------------------------
 # Load Data
 #-------------------------------------------------------------------------------
@@ -479,6 +481,19 @@ server <- function(input, output, session) {
           )
         },
         
+        if (nrow(Public_Data) > 0) {
+          p(
+            style = "color:green",
+            " Public data loaded successfully"
+          )
+        } else {
+          p(
+            style = "color:red",
+            " Unsuccsesful in Loading Public data "
+          )
+        },
+        
+        
         br(),
         h3("Database Overview"),
         
@@ -548,7 +563,7 @@ server <- function(input, output, session) {
           ),
         
         p(
-          "  - Artificial",
+         " - Artificial",
           nrow(Public_Data_Agricultural)
         ),
         
@@ -1206,6 +1221,14 @@ server <- function(input, output, session) {
       FungAMR_Agricultural,
       "gene.or.protein.name",
       "Gene"
+    )
+  )
+  
+  output$Public_Data_Agricultural_table <- renderDT(
+    make_count_table(
+      Public_Data_Agricultural,
+      "Family/species",
+      "Family"
     )
   )
   
@@ -2136,7 +2159,7 @@ server <- function(input, output, session) {
         Public_Count = n
       )
     
-    comparison <- comparison <- full_join(
+    comparison <- full_join(
       fungamr_genes,
       fel_genes,
       by = "Gene"
@@ -2204,7 +2227,7 @@ server <- function(input, output, session) {
         Public_Count = n
       )
     
-    comparison <- comparison <- full_join(
+    comparison<- full_join(
       fungamr_mutations,
       fel_mutations,
       by = "Mutation_Name"
