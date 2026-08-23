@@ -19,10 +19,8 @@
 #install.packages("rnaturalearth")
 #install.packages("sf")
 #install.packages("stringr")
-#install.packages("tidyr")
 #install.packages("leaflet")
 #install.packages("purrr")
-#install.packages("scales")
 #install.packages("DT")
 #install.packages("ggalluvial")
 #install.packages("readxl")
@@ -37,10 +35,8 @@ library(ggplot2)
 library(rnaturalearth)
 library(sf)
 library(stringr)
-library(tidyr)
 library(leaflet)
 library(purrr)
-library(scales)
 library(DT)
 library(ggalluvial)
 library(readxl)
@@ -131,9 +127,6 @@ FungAMR_Artificiall <- Fungal_AMR_Taxonomy %>%
 FungAMR_Misc <- Fungal_AMR_Taxonomy %>%
   filter(strain.origin.if.available %in% c("Unknown", "Evolved"))
 
-FungAMR_Combined <- bind_rows(
-  FungAMR_Clinical %>% mutate(origin = "Clinical"),
-  FungAMR_Agricultural %>% mutate(origin = "Agricultural"))
 #-------------------------------------------------------------------------------
 # Data Normalization - FEL
 #-------------------------------------------------------------------------------
@@ -290,7 +283,8 @@ server <- function(input, output, session) {
         result,
         options = list(pageLength = page_length)
       )
-    }, error = function(e) {
+    }, 
+    error = function(e) {
       datatable(
         data.frame(
           Error = paste("Could not load data:", e$message)
