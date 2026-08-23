@@ -9,9 +9,26 @@
 #Feel free to recomend ways to streamline the app functions. Also before publishing the app 
 #ChatGPT was used to stresstest and debug areas of the code but its involvement was limited to this.
 #I hope you enjoy the app and learn something from the data!
-
 #-------------------------------------------------------------------------------
-#Load dependencies 
+#Download Dependencies (For local run)
+#-------------------------------------------------------------------------------
+#install.packages("shiny")
+#install.packages("bslib")
+#install.packages("dplyr")
+#install.packages("ggplot2")
+#install.packages("rnaturalearth")
+#install.packages("sf")
+#install.packages("stringr")
+#install.packages("tidyr")
+#install.packages("leaflet")
+#install.packages("purrr")
+#install.packages("scales")
+#install.packages("DT")
+#install.packages("ggalluvial")
+#install.packages("readxl")
+#install.packages("viridis")
+#-------------------------------------------------------------------------------
+#Load Dependencies (For Local Run)
 #-------------------------------------------------------------------------------
 library(shiny)
 library(bslib)
@@ -44,6 +61,8 @@ Fungal_AMR_Taxonomy <- Fungal_AMR %>%
     by = "species"
   )
 Comp_Fungal_AMR <- read_xlsx("Data/Manually_Curated_Dataset.xlsx")
+
+Public_Data <- read_xlsx("Data/Public_Data.xlsx")
 #-------------------------------------------------------------------------------
 # Data Normalization - FungAMR
 #-------------------------------------------------------------------------------
@@ -157,6 +176,17 @@ Comp_Fungal_AMR <- Comp_Fungal_AMR %>%
                     c("Pseudocercospora fijiensis") ~ "Mycosphaerellaceae",
                   TRUE ~ `Family/species`))
 #-------------------------------------------------------------------------------
+  #Data Normalization Public Data
+#-------------------------------------------------------------------------------
+
+Public_Data <- Public_Data %>%
+  mutate(
+    country = Location
+  )
+      
+
+
+#-------------------------------------------------------------------------------
 # DATA Prep - FEL
 #-------------------------------------------------------------------------------
 Comp_Fungal_AMR <- Comp_Fungal_AMR %>%
@@ -193,6 +223,18 @@ FEL_Artificial <- Comp_Fungal_AMR %>%
   filter(Source_Type == "Artificial")
 
 FEL_Combined <- Comp_Fungal_AMR
+
+#-------------------------------------------------------------------------------
+  #Public Source Data
+#-------------------------------------------------------------------------------
+  Public_Data_Clinical <- Public_Data %>%
+  filter(Source_Type == "Clinical")
+
+Public_Data_Agricultural <- Public_Data %>%
+  filter(Source_Type == "Agricultural")
+
+Public_Data_Misc <- Public_Data %>%
+  filter(Source_Type == "Misc")
 #-------------------------------------------------------------------------------
 # UI
 #-------------------------------------------------------------------------------
@@ -206,8 +248,7 @@ ui <- page_sidebar(
     tags$span(
       "FungAMR & FEL Database Comparison",
       style = "vertical-align: middle; font-size: 24px;"
-    )
-  ),
+    )),
   theme = bs_theme(
     bg = "#FFFFFF",
     fg = "#000000",
@@ -221,6 +262,8 @@ ui <- page_sidebar(
       label = NULL,
       choices = c(
         "Home"                    = "home",
+        "How to Add Data"         =  "instructions",
+        "Methods"                 = "methods",
         "Clinical Data"           = "clinical",
         "Agricultural Data"       = "agricultural",
         "Resistance Genes"        = "genes",
@@ -230,7 +273,8 @@ ui <- page_sidebar(
         "Compare Databases"       = "compare"
       ),
       selected = "home"
-    )), uiOutput("page_content"))
+    )), 
+  uiOutput("page_content"))
 #-------------------------------------------------------------------------------
 # Server
 #-------------------------------------------------------------------------------
@@ -409,6 +453,7 @@ server <- function(input, output, session) {
       
 
       
+      
       "home" = div(
         h2("Welcome to the Database Comparison Tool"),
         p("This Shiny app allows you to explore and compare FungAMR and FEL databases."),
@@ -500,16 +545,75 @@ server <- function(input, output, session) {
         p(
           "  - Artificial: ",
           nrow(FEL_Artificial)
-        )
+        ),
+        br(),
+        
+        p(
+          "Public Data:",
+          nrow(Public_Data)
+          ),
+        
+        p(
+          "  - Artificial",
+          nrow(Public_Data_Agricultural)
+        ),
+        
+        p( 
+          "  - Clinical",
+          nrow(Public_Data_Clinical)
+          ),
+        
+        p(
+          "  - Misc",
+          nrow(Public_Data_Misc)
+        ),
       ),
+     
+      "instructions" = div(
+        h5("Hello, if you have data you would like to include for public access here is how to add
+           your data to the Public_Data spreadsheet."),
+        p("Step 1: Review the github for this page to make sure you have the most up to date version. 
+          It can take several weeks for the official Shiny App to reflect changes made to the github."),
+        br(),
+        p("Step 2: Download the data, what you are looking for is the Public-Data excel file.
+          You will then use this file to add your data in the same format as previous additions.
+          All categories must be filled out to be accepted to the official document and be reflected on the official Shiny App."),
+        br(),
+        p("Step 3: submit a push request the github, this will then be reviewed. 
+          If everythign is filled out correctly it will be added to the document and website ASAP.")
+      ),
+   
       
+     "methods" = div(
+       h1("  Methodology"),
+        br(),
+       h3(
+         style = "color:blue",
+         "Database"),
+       p("This project started as a project seeking to investigate the global distribution
+         of fungicide resistance. We elected to utilize the FungAMR database because of its size and completeness. However
+         this database was missing geographic data. To address this we utilized a python script to search the databases provided
+         in the database to pull geogeaphic data from the attached accessions. We then confirmed the data was pulled correctly
+         through randomly checking a quarter of the returned entries. We then removed any entry that did not have geographic data. 
+         We then analyzed this remaining data and decided to build our own datbase to compare to the FungAMR database. This is the FEL database 
+         and can be seen currently. There are some similarities between the two databases, but quite a few differences showing 
+         how important a large database which is why we decided to launch an open source database and app."),
+       br(),
+       h3(
+         style = "color:blue", "Shiny App"
+       ),
+       p("To build this database the original codes utilized for analyzing the FungAMR database were loaded into a Shiny App.
+         These were then improved to make the databases interactive and directly compare the two. ChatGPT and Claude were consulted before uplaoding the functional 
+         Shiny App for debugging and stresstesting assistance to ensure the Shiny App would function as intended when accessed by several people. 
+         A github was then created to allow access to the code for people to make suggestions and to access the databases and help build a new one."),
+     ),
      
       
       "clinical" = div(
         h2("Clinical Data"),
         
         tabsetPanel(
-          
+                    
           tabPanel(
             "FungAMR Overview",
             p(
@@ -529,6 +633,15 @@ server <- function(input, output, session) {
           ),
           
           tabPanel(
+            "Publi Data Overview",
+            p(
+              "Public Data Clinical samples: ",
+              nrow(FEL_Clinical)
+            ),
+            DTOutput("public_clinical_table")
+          ),
+          
+          tabPanel(
             "Geographic Map - FungAMR",
             plotOutput(
               "fungamr_clinical_map",
@@ -543,6 +656,13 @@ server <- function(input, output, session) {
               height = "600px"
             )
           ),
+          tabPanel(
+            "Geographic Map - Public",
+            plotOutput(
+              "Public_clinical_map",
+              height = "600px"
+            )
+          ),
           
           tabPanel(
             "Genes Comparison",
@@ -550,7 +670,10 @@ server <- function(input, output, session) {
             DTOutput("fungamr_clinical_genes"),
             br(),
             p("FEL Clinical Genes:"),
-            DTOutput("fel_clinical_genes")
+            DTOutput("fel_clinical_genes"),
+            br(),
+            p("Public Data Genes"),
+            DTOutput("Public_Data_Clinical_genes")
           ),
           
           tabPanel(
@@ -559,7 +682,10 @@ server <- function(input, output, session) {
             DTOutput("fungamr_clinical_mutations"),
             br(),
             p("FEL Clinical Mutations:"),
-            DTOutput("fel_clinical_mutations")
+            DTOutput("fel_clinical_mutations"),
+            br(),
+            p("Public Data Genes"),
+            DTOutput("Public_Data_Clinical_mutations")
           )
         )
       ),
@@ -577,6 +703,15 @@ server <- function(input, output, session) {
               nrow(FungAMR_Agricultural)
             ),
             DTOutput("fungamr_agricultural_table")
+          ),
+          
+          tabPanel(
+            "Public Data Overview",
+            p( 
+              "Public Data Agricultural Samples: ",
+              nrow(Public_Data_Agricultural)
+              ),
+            DTOutput("Public_Data_Agricultural_table")
           ),
           
           tabPanel(
@@ -605,12 +740,22 @@ server <- function(input, output, session) {
           ),
           
           tabPanel(
+            "Geographic Map - Public Data",
+            plotOutput(
+              "PublicData_Agricultural_Map"
+            ),
+          ),
+          
+          tabPanel(
             "Genes Comparison",
             p("FungAMR Agricultural Genes:"),
             DTOutput("fungamr_agricultural_genes"),
             br(),
             p("FEL Agricultural Genes:"),
-            DTOutput("fel_agricultural_genes")
+            DTOutput("fel_agricultural_genes"),
+            br(),
+            p("Public Data Agricultural Genes"),
+            DTOutput("Public_Data_Agricultural_Genes")
           ),
           
           tabPanel(
@@ -619,7 +764,10 @@ server <- function(input, output, session) {
             DTOutput("fungamr_agricultural_mutations"),
             br(),
             p("FEL Agricultural Mutations:"),
-            DTOutput("fel_agricultural_mutations")
+            DTOutput("fel_agricultural_mutations"),
+            br(),
+            p("Public Data Agricultural Mutations:"),
+            DTOutput("Public_Data_Agricultural_mutations")
           )
         )
       ),
@@ -654,9 +802,20 @@ server <- function(input, output, session) {
           ),
           
           tabPanel(
+            "Public Data",
+            
+            h4("Public Data Resistance Genes"),
+            p(
+              "Resistance genes identified in the publically build database."
+            ),
+            
+            DTOutput("Public_Data_resistance_genes")
+          ),
+          
+          tabPanel(
             "Comparison",
             
-            h4("FungAMR vs FEL Resistance Genes"),
+            h4("FungAMR vs FEL VS Public Data Resistance Genes"),
             p(
               "Comparison of resistance genes identified in each database."
             ),
@@ -695,9 +854,20 @@ server <- function(input, output, session) {
           ),
           
           tabPanel(
+            "Public Data",
+            
+            h4("Public Data Resistance Mutations"),
+            p(
+              "Resistance-associated mutations identified in the Public database."
+            ),
+            
+            DTOutput("Public_Data_resistance_mutations")
+          ),
+          
+          tabPanel(
             "Comparison",
             
-            h4("FungAMR vs FEL Resistance Mutations"),
+            h4("FungAMR vs FEL Vs Public Data Resistance Mutations"),
             p(
               "Comparison of resistance-associated mutations identified in each database."
             ),
@@ -734,16 +904,28 @@ server <- function(input, output, session) {
             )
           ),
           
+      
+          
           tabPanel(
             "FEL Map",
             leafletOutput(
               "fel_geo_map",
               height = "600px"
             )
+          ),
+          
+          tabPanel(
+            "Public_Data Map",
+            leafletOutput(
+              "Public_Data_geo_map",
+              height = "600px"
+            )
           )
         )
       ),
       
+     
+    
     
       
       "family" = div(
@@ -769,11 +951,18 @@ server <- function(input, output, session) {
               "fel_alluvial",
               height = "600px"
             )
+          ),
+          tabPanel(
+            "Public Data Alluvial",
+            plotOutput(
+              "Public_Data_alluvial",
+              height = "600px"
+            )
           )
         )
       ),
       
-    
+   
       
       "compare" = div(
         h2("Compare Databases"),
@@ -795,6 +984,11 @@ server <- function(input, output, session) {
               nrow(Comp_Fungal_AMR)
             ),
             
+            p(
+              "Public Data Records:",
+              nrow(Public_Data)
+            ),
+            
             br(),
             
             h4("Clinical Records"),
@@ -809,6 +1003,11 @@ server <- function(input, output, session) {
               nrow(FEL_Clinical)
             ),
             
+            p("Public Data Clinical:",
+              nrow(Public_Data_Clinical)
+              
+            ),
+            
             br(),
             
             h4("Agricultural Records"),
@@ -821,7 +1020,13 @@ server <- function(input, output, session) {
             p(
               "FEL Agricultural: ",
               nrow(FEL_Agricultural)
-            )
+            ),
+            
+            p(
+              "Public Data Clinical:",
+              nrow(Public_Data_Agricultural)
+            ),
+            
           ),
           
           tabPanel(
@@ -889,7 +1094,8 @@ server <- function(input, output, session) {
     make_count_table(
       FungAMR_Clinical,
       "Family",
-      "Family"
+      "Family",
+      
     )
   )
   
@@ -897,7 +1103,17 @@ server <- function(input, output, session) {
     make_count_table(
       FEL_Clinical,
       "Family/species",
-      "Family"
+      "Family",
+      
+    )
+  )
+  
+  output$public_clinical_table <- renderDT(
+    make_count_table(
+      Public_Data_Clinical,
+      "Family/species",
+      "Family",
+      
     )
   )
   
@@ -905,7 +1121,8 @@ server <- function(input, output, session) {
     make_count_table(
       FungAMR_Clinical,
       "gene.or.protein.name",
-      "Gene"
+      "Gene",
+      
     )
   )
   
@@ -913,7 +1130,8 @@ server <- function(input, output, session) {
     make_count_table(
       FEL_Clinical,
       "Gene",
-      "Gene"
+      "Gene",
+      
     )
   )
   
@@ -933,6 +1151,24 @@ server <- function(input, output, session) {
     )
   )
   
+  output$Public_Data_Clinical_genes <- renderDT(
+    make_count_table(
+      Public_Data_Clinical,
+      "Gene",
+      "Gene"
+    )
+  )
+  
+  
+  
+  output$Public_Data_Clinical_mutations <- renderDT(
+    make_count_table(
+      Public_Data_Clinical,
+      "Mutation",
+      "Mutation"
+    )
+  )
+  
   output$fungamr_clinical_map <- renderPlot({
     make_geographic_map(
       FungAMR_Clinical,
@@ -946,6 +1182,13 @@ server <- function(input, output, session) {
       "FEL Clinical Geographic Distribution"
     )
   })
+  
+  output$Public_clinical_map <- renderPlot({
+  make_geographic_map(
+    Public_Data_Clinical,
+    "Public Data Clinical Geographic Distribution"
+  )
+})
   
  
   output$fungamr_agricultural_table <- renderDT(
@@ -980,6 +1223,14 @@ server <- function(input, output, session) {
     )
   )
   
+  output$Public_Data_Agricultural_Genes <- renderDT(
+    make_count_table(
+      Public_Data_Agricultural,
+      "Gene",
+      "Gene"
+    )
+  )
+  
   output$fungamr_agricultural_mutations <- renderDT(
     make_count_table(
       FungAMR_Agricultural,
@@ -996,6 +1247,14 @@ server <- function(input, output, session) {
     )
   )
   
+  output$Public_Data_Agricultural_mutations <- renderDT(
+    make_count_table(
+      Public_Data_Agricultural,
+      "Mutation",
+      "Mutation"
+    )
+  )
+  
   output$fungamr_agricultural_map <- renderPlot({
     make_geographic_map(
       FungAMR_Agricultural,
@@ -1007,6 +1266,13 @@ server <- function(input, output, session) {
     make_geographic_map(
       FEL_Agricultural,
       "FEL Agricultural Geographic Distribution"
+    )
+  })
+  
+  output$PublicData_Agricultural_Map <- renderPlot({
+    make_geographic_map(
+      Public_Data_Agricultural,
+      "Public Data Agricultural Geographic Distribution"
     )
   })
   
@@ -1090,6 +1356,47 @@ server <- function(input, output, session) {
     )
   })
   
+  output$Public_Data_resistance_genes <- renderDT({
+    
+    gene_data <- Public_Data %>%
+      filter(
+        !is.na(Gene),
+        Gene != ""
+      ) %>%
+      group_by(Gene) %>%
+      summarise(
+        Records = n(),
+        Families_or_Species = n_distinct(
+          `Family/species`,
+          na.rm = TRUE
+        ),
+        Countries = n_distinct(
+          country,
+          na.rm = TRUE
+        ),
+        Mutations = n_distinct(
+          Mutation[
+            !is.na(Mutation) &
+              Mutation != ""
+          ]
+        ),
+        Sources = n_distinct(
+          Source_Type,
+          na.rm = TRUE
+        ),
+        .groups = "drop"
+      ) %>%
+      arrange(desc(Records))
+    
+    datatable(
+      gene_data,
+      rownames = FALSE,
+      options = list(
+        pageLength = 15,
+        scrollX = TRUE
+      )
+    )
+  })
   
   output$resistance_gene_comparison <- renderDT({
     
@@ -1116,11 +1423,25 @@ server <- function(input, output, session) {
         name = "FEL_Count"
       )
     
+    Public_Data_Genes <- Public_Data %>%
+      filter(
+        !is.na(Gene),
+        Gene != ""
+      ) %>%
+      count(
+        Gene,
+        name = "Public_Data_Count"
+      )
+    
     comparison <- full_join(
       fungamr_genes,
       fel_genes,
       by = "Gene"
     ) %>%
+      full_join(
+        Public_Data_Genes,
+        by = "Gene"
+      )%>%
       mutate(
         FungAMR_Count = replace_na(
           FungAMR_Count,
@@ -1130,12 +1451,18 @@ server <- function(input, output, session) {
           FEL_Count,
           0
         ),
-        Total = FungAMR_Count + FEL_Count,
-        Difference = FungAMR_Count - FEL_Count,
+        Public_Data_Count = replace_na(
+          Public_Data_Count,
+          0
+        ),
+        
+        Total = FungAMR_Count + FEL_Count+Public_Data_Count,
         Database = case_when(
           FungAMR_Count > 0 &
-            FEL_Count > 0 ~ "Both",
+            Public_Data_Count > 0 &
+            FEL_Count > 0 ~ "All",
           FungAMR_Count > 0 ~ "FungAMR Only",
+          Public_Data_Count >0 ~ "Public Data",
           FEL_Count > 0 ~ "FEL Only",
           TRUE ~ "None"
         )
@@ -1242,6 +1569,47 @@ server <- function(input, output, session) {
     )
   })
   
+  output$Public_Data_resistance_mutations <- renderDT({
+    
+    mutation_data <- Public_Data %>%
+      filter(
+        !is.na(Mutation),
+        Mutation != ""
+      ) %>%
+      group_by(Mutation) %>%
+      summarise(
+        Records = n(),
+        Genes = n_distinct(
+          Gene[
+            !is.na(Gene) &
+              Gene != ""
+          ]
+        ),
+        Families_or_Species = n_distinct(
+          `Family/species`,
+          na.rm = TRUE
+        ),
+        Countries = n_distinct(
+          country,
+          na.rm = TRUE
+        ),
+        Sources = n_distinct(
+          Source_Type,
+          na.rm = TRUE
+        ),
+        .groups = "drop"
+      ) %>%
+      arrange(desc(Records))
+    
+    datatable(
+      mutation_data,
+      rownames = FALSE,
+      options = list(
+        pageLength = 15,
+        scrollX = TRUE
+      )
+    )
+  })
   
   output$resistance_mutation_comparison <- renderDT({
     
@@ -1268,11 +1636,24 @@ server <- function(input, output, session) {
         name = "FEL_Count"
       )
     
+    Public_Mutations <- Public_Data %>%
+      filter( !is.na(Mutation),
+              Mutation != ""
+      ) %>%
+      count(
+        Mutation,
+        name = "Public_Data_Count"
+      )
+    
     comparison <- full_join(
       fungamr_mutations,
       fel_mutations,
       by = "Mutation"
     ) %>%
+      full_join(
+        Public_Mutations,
+        by = "Mutation"
+      ) %>%
       mutate(
         FungAMR_Count = replace_na(
           FungAMR_Count,
@@ -1281,13 +1662,20 @@ server <- function(input, output, session) {
         FEL_Count = replace_na(
           FEL_Count,
           0
+          
         ),
-        Total = FungAMR_Count + FEL_Count,
-        Difference = FungAMR_Count - FEL_Count,
+        Public_Data_Count = replace_na(
+          Public_Data_Count,
+          0
+        ),
+        
+        Total = FungAMR_Count + FEL_Count+ Public_Data_Count,
         Database = case_when(
           FungAMR_Count > 0 &
-            FEL_Count > 0 ~ "Both",
+            Public_Data_Count > 0 &
+            FEL_Count > 0 ~ "All",
           FungAMR_Count > 0 ~ "FungAMR Only",
+          Public_Data_Count > 0 ~ "Public Data Only",
           FEL_Count > 0 ~ "FEL Only",
           TRUE ~ "None"
         )
@@ -1347,6 +1735,26 @@ server <- function(input, output, session) {
     }
   })
   
+  output$Public_Data_geo_map <- renderLeaflet({
+    
+    if (input$geo_type == "clinical") {
+      
+      make_interactive_geographic_map(
+        Public_Data_Clinical,
+        "Family/species",
+        "Public Data Clinical Geographic Distribution"
+      )
+      
+    } else {
+      
+      make_interactive_geographic_map(
+        Public_Data_Agricultural,
+        "Family/species",
+        "Public Data Agricultural Geographic Distribution"
+      )
+    }
+  })
+  
  
   
   output$family_select <- renderUI({
@@ -1363,9 +1771,16 @@ server <- function(input, output, session) {
       unique() %>%
       sort()
     
+    public_families <- Public_Data %>%
+      filter(!is.na(`Family/species`)) %>%
+      pull(`Family/species`) %>%
+      unique() %>%
+      sort()
+    
     all_families <- c(
       fungamr_families,
-      fel_families
+      fel_families,
+      public_families
     ) %>%
       unique() %>%
       sort()
@@ -1536,6 +1951,83 @@ server <- function(input, output, session) {
   })
   
  
+  output$Public_Data_alluvial <- renderPlot({
+    
+    req(input$selected_family)
+    
+    data_plot <- Public_Data %>%
+      filter(
+        `Family/species` == input$selected_family,
+        !is.na(country)
+      ) %>%
+      group_by(
+        `Family/species`,
+        country,
+        Gene,
+        Mutation
+      ) %>%
+      summarise(
+        count = n(),
+        .groups = "drop"
+      )
+    
+    if (nrow(data_plot) == 0) {
+      
+      return(
+        ggplot() +
+          annotate(
+            "text",
+            x = 0.5,
+            y = 0.5,
+            label = "No data available for this family",
+            size = 5
+          ) +
+          theme_void()
+      )
+    }
+    
+    ggplot(
+      data_plot,
+      aes(
+        axis1 = `Family/species`,
+        axis2 = country,
+        axis3 = Gene,
+        axis4 = Mutation,
+        y = count
+      )
+    ) +
+      geom_alluvium(
+        aes(fill = Gene),
+        alpha = 0.8
+      ) +
+      geom_stratum() +
+      geom_text(
+        stat = "stratum",
+        aes(label = after_stat(stratum)),
+        size = 3
+      ) +
+      scale_x_discrete(
+        limits = c(
+          "Family",
+          "Country",
+          "Gene",
+          "Mutation"
+        ),
+        expand = c(.1, .1)
+      ) +
+      scale_y_continuous(
+        expand = c(0, 0)
+      ) +
+      theme_bw() +
+      labs(
+        title = paste(
+          "Public -",
+          input$selected_family
+        ),
+        y = "Count",
+        fill = "Gene"
+      )
+  })
   
   output$fungamr_compare_map <- renderPlot({
     
@@ -1640,11 +2132,25 @@ server <- function(input, output, session) {
         FEL_Count = n
       )
     
-    comparison <- full_join(
+    Public_Genes <- Public_Data %>%
+      filter(!is.na(Gene)) %>%
+      count(
+        Gene,
+        sort = TRUE
+      ) %>%
+      rename(
+        Public_Count = n
+      )
+    
+    comparison <- comparison <- full_join(
       fungamr_genes,
       fel_genes,
-      by = c("Gene")
+      by = "Gene"
     ) %>%
+      full_join(
+        Public_Genes,
+        by = "Gene"
+      )%>%
       mutate(
         FungAMR_Count = replace_na(
           FungAMR_Count,
@@ -1654,8 +2160,10 @@ server <- function(input, output, session) {
           FEL_Count,
           0
         ),
-        Difference = FungAMR_Count - FEL_Count
-      ) %>%
+        Public_Count = replace_na (
+          Public_Count,
+          0
+        )) %>%
       arrange(desc(FungAMR_Count))
     
     datatable(
@@ -1691,11 +2199,26 @@ server <- function(input, output, session) {
         FEL_Count = n
       )
     
-    comparison <- full_join(
+    Public_mutations <- Public_Data %>%
+      filter(!is.na(Mutation)) %>%
+      count(
+        Mutation,
+        sort = TRUE
+      ) %>%
+      rename(
+        Mutation_Name = Mutation,
+        Public_Count = n
+      )
+    
+    comparison <- comparison <- full_join(
       fungamr_mutations,
       fel_mutations,
       by = "Mutation_Name"
     ) %>%
+      full_join(
+        Public_mutations,
+        by = "Mutation_Name"
+      ) %>%
       mutate(
         FungAMR_Count = replace_na(
           FungAMR_Count,
@@ -1705,6 +2228,11 @@ server <- function(input, output, session) {
           FEL_Count,
           0
         ),
+        Public_Count = replace_na(
+          Public_Count,
+          0
+        ),
+        
         Difference = FungAMR_Count - FEL_Count
       ) %>%
       arrange(desc(FungAMR_Count))
