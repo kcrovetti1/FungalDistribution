@@ -1,6 +1,6 @@
 # Global scale distribution of fungicide resistance
 
-This project aims to better document the patterns of fungicide resistance at the global scale. We compared the unique accessions provided in Bédard et al. 2025. [^1], in which they built a global-scale dataset with over 64,00 entries. We manually curated their dataset filtering out entries with no accessions and without geographical information.
+This project aims to better document the patterns of fungicide resistance at the global scale. We compared the accessions provided in Bédard et al. 2025. [^1], in which they built a global-scale dataset with over 64,00 entries. We manually curated their dataset filtering out entries with no accessions and without geographical information.
 
 ## Below is information regarding methods pertinent to the data in this repository. These methods are an excerpt from the app and manuscript submitted to...
 
