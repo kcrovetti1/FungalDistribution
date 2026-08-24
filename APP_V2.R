@@ -579,17 +579,8 @@ server <- function(input, output, session) {
       ),
      
       "instructions" = div(
-        h5("Hello, if you have data you would like to include for public access here is how to add
-           your data to the Public_Data spreadsheet."),
-        p("Step 1: Review the github for this page to make sure you have the most up to date version. 
-          It can take several weeks for the official Shiny App to reflect changes made to the github."),
-        br(),
-        p("Step 2: Download the data, what you are looking for is the Public-Data excel file.
-          You will then use this file to add your data in the same format as previous additions.
-          All categories must be filled out to be accepted to the official document and be reflected on the official Shiny App."),
-        br(),
-        p("Step 3: submit a push request the github, this will then be reviewed. 
-          If everythign is filled out correctly it will be added to the document and website ASAP.")
+        h5("Hello, if you have data you would like to include for public access please review the github
+        found at this link for instructions: https://github.com/kcrovetti1/FungalDistribution/tree/main.")
       ),
    
       
@@ -889,7 +880,7 @@ server <- function(input, output, session) {
      
       
       "geographic" = div(
-        h2("Geographic Distribution(Please Give Time To Load"),
+        h2("Geographic Distribution(Please Give Time To Load)"),
         
         radioButtons(
           "geo_type",
