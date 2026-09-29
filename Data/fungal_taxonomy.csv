@@ -13,7 +13,7 @@ Fusarium graminearum,Sordariomycetes,Hypocreales,Nectriaceae
 Colletotrichum acutatum,Sordariomycetes,Glomerellales,Glomerellaceae
 Ustilaginoidea virens,Ustilaginomycetes,Ustilaginales,Clavicipitaceae
 Phakopsora pachyrhizi,Pucciniomycetes,Pucciniales,Phakopsoraceae
-Cryptococcus neoformans,Tremellomycetes,Tremellales,Tremellaceae
+Cryptococcus neoformans,,,Cryptococcaceae 
 Pyrenophora tritici-repentis,Dothideomycetes,Pleosporales,Pleosporaceae
 Colletotrichum nymphaeae,Sordariomycetes,Glomerellales,Glomerellaceae
 Blumeria graminis f. sp. tritici,Leotiomycetes,Erysiphales,Erysiphaceae
@@ -23,13 +23,13 @@ Ramularia collo-cygni,Dothideomycetes,Capnodiales,Mycosphaerellaceae
 Colletotrichum graminicola,Sordariomycetes,Glomerellales,Glomerellaceae
 Septoria glycines,Dothideomycetes,Capnodiales,Mycosphaerellaceae
 Saccharomyces cerevisiae,Saccharomycetes,Saccharomycetales,Saccharomycetaceae
-Candidozyma auris,Saccharomycetes,Saccharomycetales,Saccharomycetaceae
-Corynespora cassiicola,Dothideomycetes,Pleosporales,Didymellaceae
+Candidozyma auris,,,Metschnikowiaceae
+Corynespora cassiicola,,,Corynesporascaceae
 Pyrenophora teres,Dothideomycetes,Pleosporales,Pleosporaceae
 Rhizoctonia cerealis,Agaricomycetes,Cantharellales,Ceratobasidiaceae
 Alternaria solani,Dothideomycetes,Pleosporales,Pleosporaceae
 Erysiphe necator,Leotiomycetes,Erysiphales,Erysiphaceae
-Magnaporthe grisea,Sordariomycetes,Magnaporthales,Magnaporthaceae
+Magnaporthe grisea,,,Pyriculariaceae
 Botrytis cinerea,Leotiomycetes,Helotiales,Sclerotiniaceae
 Arthroderma vanbreuseghemii,Eurotiomycetes,Onygenales,Arthrodermataceae
 Trichophyton interdigitale,Eurotiomycetes,Onygenales,Arthrodermataceae
@@ -37,12 +37,12 @@ Pneumocystis jirovecii,Pneumocystidomycetes,Pneumocystidales,Pneumocystidaceae
 Sclerotinia sclerotiorum,Leotiomycetes,Helotiales,Sclerotiniaceae
 Fusarium incarnatum,Sordariomycetes,Hypocreales,Nectriaceae
 Colletotrichum gloeosporioides,Sordariomycetes,Glomerellales,Glomerellaceae
-Aspergillus fumigatus,Eurotiomycetes,Eurotiales,Trichocomaceae
+Aspergillus fumigatus,,,Aspergillaceae
 Pyrenophora teres f. sp. maculata,Dothideomycetes,Pleosporales,Pleosporaceae
 Pyricularia graminis-tritici,Sordariomycetes,Magnaporthales,Pyriculariaceae
 Pyricularia pennisetigena,Sordariomycetes,Magnaporthales,Pyriculariaceae
 Puccinia horiana,Pucciniomycetes,Pucciniales,Pucciniaceae
 Cercospora beticola,Dothideomycetes,Capnodiales,Mycosphaerellaceae
-Cryptococcus neoformans/Cryptococcus deneoformans,Tremellomycetes,Tremellales,Tremellaceae
-Candida auris,Saccharomycetes,Saccharomycetales,Saccharomycetaceae
+Cryptococcus neoformans/Cryptococcus deneoformans,,,Cryptococcaceae 
+Candida auris,,,Metschnikowiaceae
 Nakaseomyces glabrata,Saccharomycetes,Saccharomycetales,Saccharomycetaceae
