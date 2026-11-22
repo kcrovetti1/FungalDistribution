@@ -27,7 +27,7 @@ library(mapgl)
 #-------------------------------------------------------------------------------
 #building a combined dataset - set up
 #-------------------------------------------------------------------------------
-Combined_Data <- read_xlsx ("Data/Combined_Database_Corrected.xlsx")
+Combined_Data <- read_xlsx ("Data/Combined_Database_Corrected1.xlsx")
 
 Combined_Data <- Combined_Data %>%
   mutate(
@@ -262,12 +262,12 @@ app_theme <- bs_theme(
 ui <- page_navbar ( 
   header = useShinyjs(),
   title = tags$span(
-    tags$img(src = "FELLogo.png", height = "20px", alt = "FEL logo", "  S.P.O.R.E The Global
+    tags$img(src = "FELLogo.png", height = "20px", alt = "FEL logo", "  GeoFRAME The Global
            Fungal Antimicrobial Resistance Tracker")),
-  window_title = "SPORE - Global Fungal Antimicrobial Resistance Tracker",
+  window_title = "GeoFRAME - Global Fungal Antimicrobial Resistance Tracker",
   theme = app_theme,
   nav_panel( "Home",
-             tags$h2("Welcome to S.P.O.R.E", class = "text-center"),
+             tags$h2("Welcome to GeoFRAME", class = "text-center"),
              tags$p("This app allows you to explore current findings on fungal antimicrobial
                     resistance around the world, and even submit your own findings.", 
                     class = "text-center"),
@@ -323,9 +323,10 @@ ui <- page_navbar (
                                                                Mutations = "Mutation"),
                                                   inline = TRUE),
                      girafeOutput("distribution_map"), uiOutput("lasso_check")),
+           nav_panel("Sources", DTOutput("source_table")),
            nav_panel("Methods",
                      h1("database"),
-                     p("The S.P.O.R.E database was created in an attempt to track fungicide resistance on the global scale.
+                     p("GeoFrame database was created in an attempt to track fungicide resistance on the global scale.
                        first a base database was created by using the FungAMR database and adding geodata to it that was extracted using provided accession numbers.
                        To do this a python script was written that would utilize each provided accession to search for associated geographic metadata.
                        This data was then returned into a new excel file, and any entry that did not have associated geodata was removed. Then
@@ -490,7 +491,7 @@ server <- function(input, output, session) {
     req(input$family_picker)
     plot_data <- app_data() %>%
       filter(Family == input$family_picker, !is.na(country)) %>%
-      count(Family, country, Gene, Mutation)
+      count(Family, country, Gene, Mutation, Host_Name)
     
     output$family_table <- renderDT({
       app_data()%>%
@@ -509,11 +510,11 @@ server <- function(input, output, session) {
         labs(x = "Records", y = NULL)
     })
     
-    ggplot(plot_data, aes(axis1 = Family, axis2 = country, axis3 = Gene, axis4 = Mutation, y = n)) +
+    ggplot(plot_data, aes(axis1 = Family, axis2 = Host_Name, axis3 = country, axis4 = Gene, axis5 = Mutation, y = n)) +
       geom_alluvium(aes(fill = Gene)) +
       geom_stratum() +
       geom_text(stat = "stratum", aes(label = after_stat(stratum)), size =3) +
-      scale_x_discrete(limits =c("Family","Country","Gene","Mutation"))+ theme(panel.background =  element_blank(),
+      scale_x_discrete(limits =c("Family","Host","Country","Gene","Mutation"))+ theme(panel.background =  element_blank(),
                                                                                axis.text.y = element_blank(),
                                                                                axis.ticks.y = element_blank()) +
       scale_fill_manual(values = gene_colors) + labs(y=NULL) 
@@ -611,6 +612,15 @@ server <- function(input, output, session) {
         showNotification("Submission failed, try again later",
                          type = "error")
       })
+  })
+  
+  output$source_table <- renderDT({
+    app_data() %>%
+      group_by(Citation, Author) %>%
+      summarise(Records = n(),
+                Mutations = paste(sort(unique(na.omit(Mutation))), collapse = ", "), .groups = "drop") %>%
+      arrange(desc(Records)) %>%
+      datatable(rownames = FALSE)
   })
   
 }
